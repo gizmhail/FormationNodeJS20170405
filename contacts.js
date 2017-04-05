@@ -2,12 +2,8 @@
 var _ = require('lodash');
 var chalk = require('chalk');
 var yargs = require('yargs');
+var fs = require('fs');
 
-
-
-
-
-let contacts = require('./contacts.json');
 
 class Contact {
   constructor(id, firstName, lastName, address, phone) {
@@ -38,11 +34,10 @@ class Contact {
 class ContactService {
   constructor() {
     this.contacts = [];
-    this.loadContacts()
   }
 
-  loadContacts() {
-    this.contacts = contacts.map(function (contactData){
+  loadContacts(contactDescriptions) {
+    this.contacts = contactDescriptions.map(function (contactData){
         return new Contact(contactData);
     });
     this.contacts.push( new Contact(444, "Sébastien", "Poivre", "25 rue Lavoisier", "0687699431") ) ;
@@ -59,9 +54,35 @@ class ContactService {
   }
 }
 
+class FileContactservice {
+  constructor() {
+    this.path = './contacts.json';
+    this.contacts = [];
+  }
+
+  read(callback) {
+    fs.readFile(this.path, (error, data) => {
+      if (error) throw error;
+      var contactDescriptions = JSON.parse(data);
+      this.contacts = contactDescriptions.map(function (contactData){
+          return new Contact(contactData);
+      });
+      callback(this.contacts);
+    });
+  }
+
+  print(options) {
+    this.read((contactData) => {
+      contactData.forEach(function(contact){
+        console.log(contact.toString(options));
+      });
+    });
+  }
+}
+
 // Commands
 function listCommand(argv){
-  let contactService = new ContactService();
+  let contactService = new FileContactservice();
   contactService.print({color:argv.color});
 
 }
