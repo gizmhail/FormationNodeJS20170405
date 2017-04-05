@@ -1,4 +1,7 @@
 #!/usr/local/bin/node
+var _ = require('lodash');
+var chalk = require('chalk');
+
 let contacts = require('./contacts.json');
 
 class Contact {
@@ -15,7 +18,8 @@ class Contact {
   }
 
   toString() {
-    return "[" + this.id + "] " + this.firstName + " " + this.lastName + "\n"
+    return "[" + this.id + "] "
+      + chalk.red(this.firstName) + " " + chalk.blue(this.lastName) + "\n"
       + "Address: " + this.address + "\n"
       + "Phone: " + this.phone
   }

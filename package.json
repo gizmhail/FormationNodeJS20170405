@@ -1,0 +1,20 @@
+{
+  "name": "contact",
+  "version": "1.0.0",
+  "description": "Contacts manager",
+  "main": "contacts.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "contact",
+    "tutorial",
+    "learning"
+  ],
+  "author": "spoivre",
+  "license": "MIT",
+  "dependencies": {
+    "chalk": "^1.1.3",
+    "lodash": "^4.17.4"
+  }
+}
