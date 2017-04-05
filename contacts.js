@@ -3,11 +3,15 @@ let contacts = require('./contacts.json');
 
 class Contact {
   constructor(id, firstName, lastName, address, phone) {
-    this.id = id;
-    this.firstName = firstName;
-    this.lastName = lastName;
-    this.address = address;
-    this.phone = phone;
+    if(arguments.length == 1 && Object.keys(arguments[0]).length >= 5){
+      Object.assign(this, arguments[0]);
+    } else {
+      this.id = id;
+      this.firstName = firstName;
+      this.lastName = lastName;
+      this.address = address;
+      this.phone = phone;
+    }
   }
 
   toString() {
@@ -25,15 +29,10 @@ class ContactService {
   }
 
   loadContacts() {
-    //this.contacts.push( new Contact(1, "Sébastien", "Poivre", "25 rue Lavoisier", "0687699431") ) ;
     this.contacts = contacts.map(function (contactData){
-      return new Contact(
-        contactData["id"],
-        contactData["firstName"],
-        contactData["lastName"],
-        contactData["address"] ,
-        contactData["phone"]);
+        return new Contact(contactData);
     });
+    this.contacts.push( new Contact(444, "Sébastien", "Poivre", "25 rue Lavoisier", "0687699431") ) ;
   }
 
   get() {
