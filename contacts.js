@@ -2,7 +2,10 @@
 var _ = require('lodash');
 var chalk = require('chalk');
 var yargs = require('yargs');
-var argv = yargs.argv;
+
+
+
+
 
 let contacts = require('./contacts.json');
 
@@ -56,17 +59,25 @@ class ContactService {
   }
 }
 
-function printHelp(){
-  console.log("Usage: " + argv.$0 + " <command>");
-  console.log("Available commands:")
-  console.log("\tprint\tPrint the contacts included in contacts.json");
-}
-
-if(argv.help) {
-  printHelp();
-} if(argv.list) {
+// Commands
+function listCommand(argv){
   let contactService = new ContactService();
   contactService.print({color:argv.color});
-} else {
-  printHelp();
+
 }
+
+// CLI interface description
+yargs
+.command('list', 'print the contacts included in contacts.json', {}, function(argv) {
+  listCommand(argv);
+} )
+.help()
+.options({
+  'color': {
+    describe: 'Use this option to colorize name in command results',
+    type: 'bool'
+  }
+})
+.demandCommand(1)
+.strict()
+.argv;
