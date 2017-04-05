@@ -61,14 +61,18 @@ class FileContactservice {
 
   read(callback) {
     fs.readFile(this.path, (error, data) => {
-      try {
-        let contactDescriptions = JSON.parse(data);
-        let contacts = contactDescriptions.map(function (contactData){
-            return new Contact(contactData);
-        });
-        callback(error, contacts);
-      } catch(e) {
-        callback(e, null);
+      if(error){
+        callback(error, null);
+      } else {
+        try {
+          let contactDescriptions = JSON.parse(data);
+          let contacts = contactDescriptions.map(function (contactData){
+              return new Contact(contactData);
+          });
+          callback(error, contacts);
+        } catch(e) {
+          callback(e, null);
+        }
       }
     });
   }
@@ -80,6 +84,9 @@ class FileContactservice {
 
   add(firstName, lastName, callback) {
     this.read((error, contacts) => {
+      if(!contacts){
+        contacts = [];
+      }
       let id = 1 + _.reduce(contacts, (maxId, contact) =>{ return Math.max(maxId, contact.id ) }, 0);
       contacts.push( new Contact(id, firstName, lastName, "", "") ) ;
       this.write(contacts, (error) => {
@@ -100,15 +107,22 @@ class FileContactservice {
   watch(callback) {
     this.read( (error, initialContacts) => {
       let previousContacts = initialContacts;
-      fs.watch(this.path, () => {
+      fs.watch(this.path, (eventType, filename) => {
+        if(eventType == 'rename') {
+          // File deleted
+          console.log("Unable to continue watching");
+          process.exit();
+        }
         this.read( (error, newContacts) => {
-          let referenceContacts = _.clone(previousContacts);
-          let added = _.differenceWith(newContacts, referenceContacts, _.isEqual);
-          let removed = _.differenceWith(referenceContacts, newContacts, _.isEqual);
-          if(error || added.length != 0 || removed.length != 0){
-            callback(error, newContacts, referenceContacts, added, removed);
+          if(!error){
+            let referenceContacts = _.clone(previousContacts);
+            let added = _.differenceWith(newContacts, referenceContacts, _.isEqual);
+            let removed = _.differenceWith(referenceContacts, newContacts, _.isEqual);
+            if(added.length != 0 || removed.length != 0){
+              callback(error, newContacts, referenceContacts, added, removed);
+              previousContacts = newContacts;
+            }
           }
-          previousContacts = newContacts;
         });
       });
     });
@@ -154,15 +168,16 @@ function watchCommand(argv) {
   contactService.watch(function(error, contacts, previousContacts, added, removed){
     console.log("-------------\nContacts changed.");
     if(error) {
+      console.log(error);
       console.log("[Error] Corrupted contact file.")
     } else {
       if(added.length > 0){
-          console.log("+++\n Added contacts:")
-          added.forEach((contact) => { console.log(contact.toString({color:argv.color})) });
+          console.log("Added contacts:")
+          added.forEach((contact) => { console.log("+++", contact.toString({color:argv.color})) });
       }
       if(removed.length > 0){
           console.log("---\nRemoved contacts:")
-          removed.forEach((contact) => { console.log(contact.toString({color:argv.color})) });
+          removed.forEach((contact) => { console.log("---", contact.toString({color:argv.color})) });
       }
     }
   });
