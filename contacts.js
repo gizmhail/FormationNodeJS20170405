@@ -1,6 +1,7 @@
 #!/usr/local/bin/node
 var _ = require('lodash');
 var chalk = require('chalk');
+var argv = require('yargs').argv;
 
 let contacts = require('./contacts.json');
 
@@ -50,5 +51,10 @@ class ContactService {
   }
 }
 
-let contactService = new ContactService();
-contactService.print();
+if(argv.help) {
+  console.log("Print the contacts included in contacts.json");
+  console.log("Usage: " + argv.$0);
+} else {
+  let contactService = new ContactService();
+  contactService.print();
+}
