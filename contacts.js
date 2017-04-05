@@ -1,7 +1,8 @@
 #!/usr/local/bin/node
 var _ = require('lodash');
 var chalk = require('chalk');
-var argv = require('yargs').argv;
+var yargs = require('yargs');
+var argv = yargs.argv;
 
 let contacts = require('./contacts.json');
 
@@ -18,11 +19,15 @@ class Contact {
     }
   }
 
-  toString() {
-    return "[" + this.id + "] "
-      + chalk.red(this.firstName) + " " + chalk.blue(this.lastName) + "\n"
-      + "Address: " + this.address + "\n"
-      + "Phone: " + this.phone
+  toString(options) {
+    let str = "[" + this.id + "] "
+    str += options.color ? chalk.red(this.firstName):this.firstName
+    str += " "
+    str += options.color ? chalk.blue(this.lastName):this.lastName
+    str += "\n"
+    str += "Address: " + this.address + "\n"
+    str += "Phone: " + this.phone
+    return str;
   }
 
 }
@@ -44,17 +49,24 @@ class ContactService {
     return this.contacts;
   }
 
-  print() {
+  print(options) {
     this.get().forEach(function(contact){
-      console.log(contact.toString());
+      console.log(contact.toString(options));
     });
   }
 }
 
+function printHelp(){
+  console.log("Usage: " + argv.$0 + " <command>");
+  console.log("Available commands:")
+  console.log("\tprint\tPrint the contacts included in contacts.json");
+}
+
 if(argv.help) {
-  console.log("Print the contacts included in contacts.json");
-  console.log("Usage: " + argv.$0);
-} else {
+  printHelp();
+} if(argv.list) {
   let contactService = new ContactService();
-  contactService.print();
+  contactService.print({color:argv.color});
+} else {
+  printHelp();
 }
