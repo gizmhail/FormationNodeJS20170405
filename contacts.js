@@ -104,6 +104,8 @@ class FileContactservice {
     });
   }
 
+  // Note that this method will kill the process if the contact file is renamed or deleted
+  // (for instance, during a checkout to reset it)
   watch(callback) {
     this.read( (error, initialContacts) => {
       let previousContacts = initialContacts;
