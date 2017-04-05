@@ -57,17 +57,16 @@ class ContactService {
 class FileContactservice {
   constructor() {
     this.path = './contacts.json';
-    this.contacts = [];
   }
 
   read(callback) {
     fs.readFile(this.path, (error, data) => {
       if (error) throw error;
-      var contactDescriptions = JSON.parse(data);
-      this.contacts = contactDescriptions.map(function (contactData){
+      let contactDescriptions = JSON.parse(data);
+      let contacts = contactDescriptions.map(function (contactData){
           return new Contact(contactData);
       });
-      callback(this.contacts);
+      callback(contacts);
     });
   }
 
