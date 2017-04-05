@@ -79,9 +79,19 @@ class FileContactservice {
     this.read((contacts) => {
       let id = 1 + _.reduce(contacts, (maxId, contact) =>{ return Math.max(maxId, contact.id ) }, 0);
       contacts.push( new Contact(id, firstName, lastName, "", "") ) ;
-      this.write(contacts, callback(contacts))
+      this.write(contacts, (error) => {
+        callback(error, contacts);
+      });
     });
+  }
 
+  delete(contactId, callback){
+    this.read((contacts) => {
+      contacts = _.filter(contacts, (contact) => { return contact.id != contactId});
+      this.write(contacts, (error) => {
+        callback(error, contacts);
+      });
+    });
   }
 
   print(options) {
@@ -102,22 +112,35 @@ function listCommand(argv) {
 
 function addContactCommand(argv) {
   let contactService = new FileContactservice();
-  contactService.add(argv.firstName, argv.lastName, function(){
+  contactService.add(argv.firstName, argv.lastName, function(error, contacts){
+    if (error) throw error;
     contactService.print({color:argv.color});
   });
 }
 
+function deleteContactCommand(argv) {
+  let contactService = new FileContactservice();
+  contactService.delete(argv.contactId, function(error, contacts){
+    if (error) throw error;
+    contactService.print({color:argv.color});
+  });
+}
 
 // CLI interface description
 yargs
 .command('list', 'print the contacts included in contacts.json', {}, function(argv) {
   listCommand(argv);
 } )
-.command('add [firstName] [lastName]', 'add contact', {
+.command('add [firstName] [lastName]', 'add a contact', {
   firstName:{  },
   lastName:{  },
   }, function(argv) {
     addContactCommand(argv);
+} )
+.command('delete [contactId]', 'delete a contact', {
+  contactId:{  }
+  }, function(argv) {
+    deleteContactCommand(argv);
 } )
 .help()
 .options({
