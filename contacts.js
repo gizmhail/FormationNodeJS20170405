@@ -20,9 +20,9 @@ class Contact {
 
   toString(options) {
     let str = "[" + this.id + "] "
-    str += options.color ? chalk.red(this.firstName):this.firstName
+    str += (options && options.color) ? chalk.red(this.firstName):this.firstName
     str += " "
-    str += options.color ? chalk.blue(this.lastName):this.lastName
+    str += (options && options.color) ? chalk.blue(this.lastName):this.lastName
     str += "\n"
     str += "Address: " + this.address + "\n"
     str += "Phone: " + this.phone
