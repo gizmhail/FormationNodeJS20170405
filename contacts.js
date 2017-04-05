@@ -70,9 +70,23 @@ class FileContactservice {
     });
   }
 
+  write(contacts, callback) {
+    let contactDescriptions = JSON.stringify(contacts);
+    fs.writeFile(this.path, contactDescriptions, callback);
+  }
+
+  add(firstName, lastName, callback){
+    this.read((contacts) => {
+      let id = 1 + _.reduce(contacts, (maxId, contact) =>{ return Math.max(maxId, contact.id ) }, 0);
+      contacts.push( new Contact(id, firstName, lastName, "", "") ) ;
+      this.write(contacts, callback(contacts))
+    });
+
+  }
+
   print(options) {
-    this.read((contactData) => {
-      contactData.forEach(function(contact){
+    this.read((contacts) => {
+      contacts.forEach(function(contact){
         console.log(contact.toString(options));
       });
     });
@@ -80,16 +94,30 @@ class FileContactservice {
 }
 
 // Commands
-function listCommand(argv){
+function listCommand(argv) {
   let contactService = new FileContactservice();
   contactService.print({color:argv.color});
 
 }
 
+function addContactCommand(argv) {
+  let contactService = new FileContactservice();
+  contactService.add(argv.firstName, argv.lastName, function(){
+    contactService.print({color:argv.color});
+  });
+}
+
+
 // CLI interface description
 yargs
 .command('list', 'print the contacts included in contacts.json', {}, function(argv) {
   listCommand(argv);
+} )
+.command('add [firstName] [lastName]', 'add contact', {
+  firstName:{  },
+  lastName:{  },
+  }, function(argv) {
+    addContactCommand(argv);
 } )
 .help()
 .options({
