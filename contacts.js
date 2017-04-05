@@ -61,12 +61,15 @@ class FileContactservice {
 
   read(callback) {
     fs.readFile(this.path, (error, data) => {
-      if (error) throw error;
-      let contactDescriptions = JSON.parse(data);
-      let contacts = contactDescriptions.map(function (contactData){
-          return new Contact(contactData);
-      });
-      callback(contacts);
+      try {
+        let contactDescriptions = JSON.parse(data);
+        let contacts = contactDescriptions.map(function (contactData){
+            return new Contact(contactData);
+        });
+        callback(error, contacts);
+      } catch(e) {
+        callback(e, null);
+      }
     });
   }
 
@@ -75,8 +78,8 @@ class FileContactservice {
     fs.writeFile(this.path, contactDescriptions, callback);
   }
 
-  add(firstName, lastName, callback){
-    this.read((contacts) => {
+  add(firstName, lastName, callback) {
+    this.read((error, contacts) => {
       let id = 1 + _.reduce(contacts, (maxId, contact) =>{ return Math.max(maxId, contact.id ) }, 0);
       contacts.push( new Contact(id, firstName, lastName, "", "") ) ;
       this.write(contacts, (error) => {
@@ -85,8 +88,8 @@ class FileContactservice {
     });
   }
 
-  delete(contactId, callback){
-    this.read((contacts) => {
+  delete(contactId, callback) {
+    this.read((error, contacts) => {
       contacts = _.filter(contacts, (contact) => { return contact.id != contactId});
       this.write(contacts, (error) => {
         callback(error, contacts);
@@ -94,8 +97,28 @@ class FileContactservice {
     });
   }
 
+  watch(callback) {
+    this.read( (error, initialContacts) => {
+      let previousContacts = initialContacts;
+      fs.watch(this.path, () => {
+        this.read( (error, newContacts) => {
+          let referenceContacts = _.clone(previousContacts);
+          let added = _.differenceWith(newContacts, referenceContacts, _.isEqual);
+          let removed = _.differenceWith(referenceContacts, newContacts, _.isEqual);
+          if(error || added.length != 0 || removed.length != 0){
+            callback(error, newContacts, referenceContacts, added, removed);
+          }
+          previousContacts = newContacts;
+        });
+      });
+    });
+  }
+
   print(options) {
-    this.read((contacts) => {
+    this.read( (error, contacts) => {
+      if(contacts.length == 0) {
+        console.log("No contact.")
+      }
       contacts.forEach(function(contact){
         console.log(contact.toString(options));
       });
@@ -126,10 +149,32 @@ function deleteContactCommand(argv) {
   });
 }
 
+function watchCommand(argv) {
+  let contactService = new FileContactservice();
+  contactService.watch(function(error, contacts, previousContacts, added, removed){
+    console.log("-------------\nContacts changed.");
+    if(error) {
+      console.log("[Error] Corrupted contact file.")
+    } else {
+      if(added.length > 0){
+          console.log("+++\n Added contacts:")
+          added.forEach((contact) => { console.log(contact.toString({color:argv.color})) });
+      }
+      if(removed.length > 0){
+          console.log("---\nRemoved contacts:")
+          removed.forEach((contact) => { console.log(contact.toString({color:argv.color})) });
+      }
+    }
+  });
+}
+
 // CLI interface description
 yargs
 .command('list', 'print the contacts included in contacts.json', {}, function(argv) {
   listCommand(argv);
+} )
+.command('watch', 'watch contacts.json and print its new change if changed', {}, function(argv) {
+  watchCommand(argv);
 } )
 .command('add [firstName] [lastName]', 'add a contact', {
   firstName:{  },
