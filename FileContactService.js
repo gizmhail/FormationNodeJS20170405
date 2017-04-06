@@ -2,6 +2,7 @@
 const Contact = require('./Contact');
 const fs = require('fs');
 const _ = require('lodash');
+const WriteImplems = require('./WriteImplems.js');
 
 class FileContactservice {
   constructor() {
@@ -28,8 +29,7 @@ class FileContactservice {
   }
 
   write(contacts, callback) {
-    let contactDescriptions = JSON.stringify(contacts);
-    fs.writeFile(this.path, contactDescriptions, callback);
+    WriteImplems.callbacks(this.path, contacts, callback);
   }
 
   // Call also be used with a add(contactData, callback) signature
