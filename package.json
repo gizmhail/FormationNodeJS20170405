@@ -1,6 +1,6 @@
 {
   "name": "contact",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "Contacts manager",
   "main": "contacts.js",
   "scripts": {
@@ -13,9 +13,13 @@
   ],
   "author": "spoivre",
   "license": "MIT",
+  "homepage": "http://twitter.com/spoivre",
+  "repository": "<Not yet defined>"
   "dependencies": {
     "chalk": "^1.1.3",
     "lodash": "^4.17.4",
     "yargs": "^7.0.2"
-  }
+  },
+  "engines" : { "node" : ">=7.0.0" },
+
 }
