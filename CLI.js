@@ -11,21 +11,21 @@ function listCommand(argv) {
 
 function addContactCommand(argv) {
   contactService.add(argv.firstName, argv.lastName, function(error, contact){
-    if (error) throw error;
+    if (error) console.error(error);
     contactService.print({color:argv.color});
   });
 }
 
 function deleteContactCommand(argv, contactService) {
   contactService.delete(argv.contactId, function(error, contacts){
-    if (error) throw error;
+    if (error) console.error(error);
     contactService.print({color:argv.color});
   });
 }
 
 function resetCommand(argv, contactService) {
   contactService.resetContactsToDefaultValue(function(error, contacts){
-    if (error) throw error;
+    if (error) console.error(error);
     contactService.print({color:argv.color});
   });
 }
@@ -35,7 +35,7 @@ function watchCommand(argv, contactService) {
   contactService.watch(function(error, contacts, previousContacts, added, removed){
     console.log("-------------\nContacts changed.");
     if(error) {
-      console.log(error);
+      console.error(error);
       console.log("[Error] Corrupted contact file.")
     } else {
       if(added.length > 0){
