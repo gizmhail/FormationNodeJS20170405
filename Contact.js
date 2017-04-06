@@ -2,8 +2,16 @@ var chalk = require('chalk');
 
 class Contact {
   constructor(id, firstName, lastName, address, phone) {
-    if(arguments.length == 1 && Object.keys(arguments[0]).length >= 5){
-      Object.assign(this, arguments[0]);
+    if(arguments.length == 1){
+      let contactData = arguments[0];
+      this.id = contactData.id;
+      this.firstName = contactData.firstName;
+      this.lastName = contactData.lastName;
+      this.address = contactData.address;
+      this.phone = contactData.phone;
+      if(this.id == undefined){
+        throw "Contact creation error: missing id in " + JSON.stringify(contactData);
+      }
     } else {
       this.id = id;
       this.firstName = firstName;

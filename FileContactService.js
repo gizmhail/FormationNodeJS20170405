@@ -32,16 +32,40 @@ class FileContactservice {
     fs.writeFile(this.path, contactDescriptions, callback);
   }
 
+  // Call also be used with a add(contactData, callback) signature
+  // In this case, contactData might not contain id
   add(firstName, lastName, callback) {
     this.read((error, contacts) => {
       if(!contacts){
         contacts = [];
       }
-      let id = 1 + _.reduce(contacts, (maxId, contact) =>{ return Math.max(maxId, contact.id ) }, 0);
-      contacts.push( new Contact(id, firstName, lastName, "", "") ) ;
-      this.write(contacts, (error) => {
-        callback(error, contacts);
-      });
+      let id = 1 + _.reduce(contacts, (maxId, contact) => { return Math.max(maxId, contact.id ) }, 0);
+      let contact = null;
+      if(arguments.length == 2) {
+        let contactData = arguments[0];
+        callback = arguments[1];
+        if(contactData.id == undefined) {
+          contactData.id = id;
+        } else {
+          // TODO: Check that proposed id does not already exist
+          // Otherwise, throw an error
+        }
+        try {
+          contact = new Contact(contactData);
+        } catch(e) {
+          contact = null;
+          callback(error, null);
+        }
+      } else {
+        contact = new Contact(id, firstName, lastName, "", "");
+      }
+      if(contact){
+        contacts.push( contact ) ;
+        this.write(contacts, (error) => {
+          // TODO: Ensure that contactact is present in contacts, as expected
+          callback(error, contact);
+        });
+      }
     });
   }
 
