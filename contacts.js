@@ -112,7 +112,7 @@ class FileContactservice {
       fs.watch(this.path, (eventType, filename) => {
         if(eventType == 'rename') {
           // File deleted
-          console.log("Unable to continue watching");
+          console.log("Unable to continue watching: file renamed");
           process.exit();
         }
         this.read( (error, newContacts) => {
