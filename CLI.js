@@ -23,6 +23,14 @@ function deleteContactCommand(argv, contactService) {
   });
 }
 
+function resetCommand(argv, contactService) {
+  contactService.resetContactsToDefaultValue(function(error, contacts){
+    if (error) throw error;
+    contactService.print({color:argv.color});
+  });
+}
+
+
 function watchCommand(argv, contactService) {
   contactService.watch(function(error, contacts, previousContacts, added, removed){
     console.log("-------------\nContacts changed.");
@@ -48,9 +56,6 @@ function activateCLIInterface() {
   .command('list', 'print the contacts included in contacts.json', {}, function(argv) {
     listCommand(argv, contactService);
   } )
-  .command('watch', 'watch contacts.json and print its new change if changed', {}, function(argv) {
-    watchCommand(argv, contactService);
-  } )
   .command('add [firstName] [lastName]', 'add a contact', {
     firstName:{  },
     lastName:{  },
@@ -61,6 +66,12 @@ function activateCLIInterface() {
     contactId:{  }
     }, function(argv) {
       deleteContactCommand(argv, contactService);
+  } )
+  .command('watch', 'watch contacts.json and print its new change if changed', {}, function(argv) {
+    watchCommand(argv, contactService);
+  } )
+  .command('reset', 'reset contacts to initial default value\nWarning: it will delete all new contacts!', {}, function(argv) {
+    resetCommand(argv, contactService);
   } )
   .help()
   .options({

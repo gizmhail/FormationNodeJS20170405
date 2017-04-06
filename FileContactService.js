@@ -8,8 +8,9 @@ class FileContactservice {
     this.path = './contacts.json';
   }
 
-  read(callback) {
-    fs.readFile(this.path, (error, data) => {
+  read(callback, path) {
+    path = path || this.path;
+    fs.readFile(path, (error, data) => {
       if(error){
         callback(error, null);
       } else {
@@ -88,6 +89,20 @@ class FileContactservice {
         console.log(contact.toString(options));
       });
     });
+  }
+
+  resetContactsToDefaultValue(callback) {
+    // Read the archived file contacts.json.default
+    this.read( (error, archivedContacts) => {
+      this.write(archivedContacts, (error) => {
+        if(error){
+          callback(error);
+        } else {
+          // Read again to check that everything is fine and return the actualy stored contacts
+          this.read(callback);
+        }
+      });
+    }, './contacts.json.default')
   }
 }
 
