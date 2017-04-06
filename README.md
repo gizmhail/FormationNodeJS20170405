@@ -1,5 +1,5 @@
-CLI node app to handle a contact list
-Sample learning program
+CLI node app to handle a contact list. Also include a http serve to serve contact.
+Sample learning program, made during a NodeJS learning course.
 
 Development remarks
 =======================
