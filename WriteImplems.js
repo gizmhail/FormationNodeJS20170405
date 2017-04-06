@@ -55,3 +55,26 @@ module.exports.promise = function(path, contacts, callback){
     });
   })
 }
+
+module.exports.asyncAwait = function(path, contacts, callback){
+  let write = async function(path, contacts, callback) {
+    let backupPath = path + ".back"
+    let contactDescriptions = JSON.stringify(contacts);
+    let previousData = await readFile(path);
+    await writeFile(backupPath, previousData);
+    try {
+      await writeFile(path, contactDescriptions)
+    } catch(newWriteError) {
+      await rename(backupPath, path)
+      throw newWriteError;
+    }
+  }
+
+  write(path, contacts)
+  .then( () => {
+      callback()
+  })
+  .catch( (error) => {
+      callback(error)
+  });
+}

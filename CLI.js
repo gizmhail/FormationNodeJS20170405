@@ -11,7 +11,7 @@ function listCommand(argv) {
 
 function addContactCommand(argv) {
   contactService.add(argv.firstName, argv.lastName, function(error, contact){
-    if (error) console.error(error);
+    if (error) console.error("Add error: ", error);
     contactService.print({color:argv.color});
   });
 }

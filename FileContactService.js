@@ -29,7 +29,7 @@ class FileContactservice {
   }
 
   write(contacts, callback) {
-    WriteImplems.promise(this.path, contacts, callback);
+    WriteImplems.asyncAwait(this.path, contacts, callback);
   }
 
   // Call also be used with a add(contactData, callback) signature
