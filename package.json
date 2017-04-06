@@ -16,9 +16,13 @@
   "homepage": "http://twitter.com/spoivre",
   "repository": "<Not yet defined>",
   "dependencies": {
+    "body-parser": "^1.17.1",
     "chalk": "^1.1.3",
+    "express": "^4.15.2",
     "lodash": "^4.17.4",
     "yargs": "^7.0.2"
   },
-  "engines" : { "node" : ">=7.0.0" }
+  "engines": {
+    "node": ">=7.0.0"
+  }
 }

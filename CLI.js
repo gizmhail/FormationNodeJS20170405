@@ -1,5 +1,5 @@
 var yargs = require('yargs');
-// var FileContactservice = require('./FileContactservice');
+var server = require('./Server');
 
 // Global file contact service used by the module
 var  contactService = null;
@@ -72,6 +72,9 @@ function activateCLIInterface() {
   } )
   .command('reset', 'reset contacts to initial default value\nWarning: it will delete all new contacts!', {}, function(argv) {
     resetCommand(argv, contactService);
+  } )
+  .command('serve', 'start a contacts web server', {}, function(argv) {
+    server.startServer(contactService);
   } )
   .help()
   .options({
