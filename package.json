@@ -13,8 +13,8 @@
   ],
   "author": "spoivre",
   "license": "MIT",
-  "homepage": "http://twitter.com/spoivre",
-  "repository": "<Not yet defined>",
+  "homepage": "https://github.com/gizmhail/FormationNodeJS20170405",
+  "repository": "https://github.com/gizmhail/FormationNodeJS20170405",
   "dependencies": {
     "body-parser": "^1.17.1",
     "chalk": "^1.1.3",
