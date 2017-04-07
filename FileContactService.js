@@ -3,6 +3,7 @@ const Contact = require('./Contact');
 const fs = require('fs');
 const _ = require('lodash');
 const WriteImplems = require('./WriteImplems.js');
+const ReadImplems = require('./ReadImplems.js');
 
 class FileContactservice {
   constructor() {
@@ -11,21 +12,7 @@ class FileContactservice {
 
   read(callback, path) {
     path = path || this.path;
-    fs.readFile(path, (error, data) => {
-      if(error){
-        callback(error, null);
-      } else {
-        try {
-          let contactDescriptions = JSON.parse(data);
-          let contacts = contactDescriptions.map(function (contactData){
-              return new Contact(contactData);
-          });
-          callback(error, contacts);
-        } catch(e) {
-          callback(e, null);
-        }
-      }
-    });
+    ReadImplems.original(path, callback);
   }
 
   write(contacts, callback) {
