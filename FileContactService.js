@@ -12,7 +12,7 @@ class FileContactservice {
 
   read(callback, path) {
     path = path || this.path;
-    ReadImplems.original(path, callback);
+    ReadImplems.stream(path, callback);
   }
 
   write(contacts, callback) {
