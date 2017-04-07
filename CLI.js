@@ -5,28 +5,32 @@ var server = require('./Server');
 var  contactService = null;
 // Commands
 function listCommand(argv) {
-  contactService.print({color:argv.color});
-
+  contactService.print({color:argv.color})
+  .then( () => { if(contactService.close) contactService.close(); });
 }
 
 function addContactCommand(argv) {
   contactService.add(argv.firstName, argv.lastName, function(error, contact){
     if (error) console.error("Add error: ", error);
-    contactService.print({color:argv.color});
+    contactService.print({color:argv.color})
+    .then( () => { if(contactService.close) contactService.close(); });
+    console.log("Print asked");
   });
 }
 
 function deleteContactCommand(argv, contactService) {
   contactService.delete(argv.contactId, function(error, contacts){
     if (error) console.error(error);
-    contactService.print({color:argv.color});
+    contactService.print({color:argv.color})
+    .then( () => { if(contactService.close) contactService.close(); });
   });
 }
 
 function resetCommand(argv, contactService) {
   contactService.resetContactsToDefaultValue(function(error, contacts){
     if (error) console.error(error);
-    contactService.print({color:argv.color});
+    contactService.print({color:argv.color})
+    .then( () => { if(contactService.close) contactService.close(); });
   });
 }
 
@@ -47,6 +51,7 @@ function watchCommand(argv, contactService) {
           removed.forEach((contact) => { console.log("---", contact.toString({color:argv.color})) });
       }
     }
+    if(contactService.close) contactService.close();
   });
 }
 

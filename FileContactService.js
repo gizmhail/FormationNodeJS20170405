@@ -92,12 +92,15 @@ class FileContactservice {
   }
 
   print(options) {
-    this.read( (error, contacts) => {
-      if(contacts.length == 0) {
-        console.log("No contact.")
-      }
-      contacts.forEach(function(contact){
-        console.log(contact.toString(options));
+    return new Promise( (resolve, reject) => {
+      this.read( (error, contacts) => {
+        if(contacts.length == 0) {
+          console.log("No contact.")
+        }
+        contacts.forEach(function(contact){
+          console.log(contact.toString(options));
+        });
+        resolve();
       });
     });
   }

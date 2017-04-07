@@ -1,4 +1,7 @@
 const mongoose = require('mongoose');
+const Contact = require('./Contact');
+const util = require('util');
+const FileContactService = require('./FileContactService');
 const Schema = mongoose.Schema;
 
 var contactSchema = new Schema({
@@ -8,6 +11,10 @@ var contactSchema = new Schema({
 });
 
 var ContactModel = mongoose.model('Contact', contactSchema);
+// Hack to avoid to duplicate/inherit common code ;)
+ContactModel.prototype.toString = Contact.prototype.toString;
+// TODO: Fix it, cause problems (but should be cleaner/more elegant)
+// util.inherits(ContactModel, Contact);
 
 class MongoContactService {
   constructor(callback) {
@@ -59,6 +66,13 @@ class MongoContactService {
   watch(callback) {
     //TODO
   }
+
+  close(){
+    mongoose.disconnect();
+  }
 }
+
+// Hack to avoid to duplicate/inherit common code
+MongoContactService.prototype.print = FileContactService.prototype.print;
 
 module.exports = MongoContactService;
