@@ -13,7 +13,8 @@ var contactSchema = new Schema({
 var ContactModel = mongoose.model('Contact', contactSchema);
 // Hack to avoid to duplicate/inherit common code ;)
 ContactModel.prototype.toString = Contact.prototype.toString;
-// TODO: Fix it, cause problems (but should be cleaner/more elegant)
+// TODO: Investigate util.inherits usage:
+//  currently it would cause problems (but might be cleaner/more elegant)
 // util.inherits(ContactModel, Contact);
 
 class MongoContactService {
