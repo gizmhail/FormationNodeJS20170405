@@ -95,9 +95,10 @@ function router(app, fileContactService, io){
   // Websocket
   io.on('connection', function (socket) {
     console.log("Websocket connection");
-    socket.on('event', function (data) {
-      console.log("event:", data);
+    fileContactService.watch(function(error, contacts, previousContacts, added, removed){
+      socket.emit("contacts", contacts);
     });
+
   });
 }
 
