@@ -21,7 +21,7 @@ function router(app, fileContactService){
       if(error){
         res.status(500).json(error);
       } else {
-        res.status(200).json({contacts: contacts});
+        res.status(200).json(contacts);
       }
     });
   });
