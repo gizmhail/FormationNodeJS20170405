@@ -21,7 +21,7 @@ function router(app, fileContactService){
       if(error){
         res.status(500).json(error);
       } else {
-        res.status(400).json({contacts: contacts});
+        res.status(200).json({contacts: contacts});
       }
     });
   });
@@ -35,7 +35,7 @@ function router(app, fileContactService){
       } else {
         let matchingContacts = _.filter(contacts, contact => ( contact.id == req.params.id) );
         if(matchingContacts.length > 0 ){
-          res.status(400).json({contact: matchingContacts[0]});
+          res.status(200).json({contact: matchingContacts[0]});
         } else {
           res.status(404).json({error: "Contact not found"});
         }
@@ -85,7 +85,7 @@ function router(app, fileContactService){
         let errorMessage = "Error deleting contact " + req.params.id + ": " + error;
         res.status(500).send({error: errorMessage});
       } else {
-        res.status(400).json({contacts: contacts});
+        res.status(200).json({contacts: contacts});
       }
     });
   });
