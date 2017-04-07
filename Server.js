@@ -2,17 +2,19 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const _ = require('lodash');
-
+const socketio = require('socket.io')
+const http = require('http');
 
 function startServer(fileContactService) {
   let app = express();
-  app
-  .use(express.static('./public'))
-  router(app, fileContactService);
-  app.listen(8080);
+  let server = http.Server(app);
+  let io = socketio.listen(server);
+  app.use(express.static('./public'));
+  router(app, fileContactService, io);
+  server.listen(8080);
 }
 
-function router(app, fileContactService){
+function router(app, fileContactService, io){
   var jsonParser = bodyParser.json()
 
   // List all contacts
@@ -51,7 +53,7 @@ function router(app, fileContactService){
         let errorMessage = "Error creating contact with " + JSON.stringify(req.body) + ": " + error;
         res.status(500).send({error: errorMessage});
       } else {
-        res.json( {contact: contact} );
+        res.json(contact);
       }
     });
   });
@@ -71,7 +73,7 @@ function router(app, fileContactService){
             let errorMessage = "Error creating contact with " + JSON.stringify(req.body) + ": " + error;
             res.status(500).send({error: errorMessage});
           } else {
-            res.json( {contact: contact} );
+            res.json(contact);
           }
         });
       }
@@ -85,8 +87,16 @@ function router(app, fileContactService){
         let errorMessage = "Error deleting contact " + req.params.id + ": " + error;
         res.status(500).send({error: errorMessage});
       } else {
-        res.status(200).json({contacts: contacts});
+        res.status(200).json(contacts);
       }
+    });
+  });
+
+  // Websocket
+  io.on('connection', function (socket) {
+    console.log("Websocket connection");
+    socket.on('event', function (data) {
+      console.log("event:", data);
     });
   });
 }

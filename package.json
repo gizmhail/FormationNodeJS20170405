@@ -21,6 +21,7 @@
     "denodeify": "^1.2.1",
     "express": "^4.15.2",
     "lodash": "^4.17.4",
+    "socket.io": "^1.7.3",
     "yargs": "^7.0.2"
   },
   "engines": {
