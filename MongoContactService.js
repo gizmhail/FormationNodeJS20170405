@@ -9,12 +9,9 @@ var contactSchema = new Schema({
 
 var ContactModel = mongoose.model('Contact', contactSchema);
 
-
-
-
 class MongoContactService {
-  constructor() {
-    mongoose.connect('mongodb://localhost/test');
+  constructor(callback) {
+    mongoose.connect('mongodb://localhost/test', callback);
   }
 
   read(callback) {
