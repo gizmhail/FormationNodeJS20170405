@@ -71,6 +71,7 @@ class MongoContactService {
   close(){
     mongoose.disconnect();
   }
+
 }
 
 // Hack to avoid to duplicate/inherit common code
